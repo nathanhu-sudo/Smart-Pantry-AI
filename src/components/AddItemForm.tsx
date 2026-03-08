@@ -72,13 +72,14 @@ export function AddItemForm({ onAdd }: AddItemFormProps) {
               onClick={() => setOpen(false)}
             />
 
-            {/* Modal */}
+            {/* Modal — centred, max-height safe for small phones */}
             <motion.div
-              initial={{ opacity: 0, y: 40, scale: 0.97 }}
+              initial={{ opacity: 0, y: 24, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 20, scale: 0.97 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed inset-x-4 bottom-4 sm:inset-auto sm:left-1/2 sm:-translate-x-1/2 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-md z-50"
+              exit={{ opacity: 0, y: 16, scale: 0.97 }}
+              transition={{ type: "spring", damping: 28, stiffness: 320 }}
+              className="fixed z-50 inset-x-4 top-1/2 -translate-y-1/2 sm:inset-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-full sm:max-w-md"
+              style={{ maxHeight: "calc(100dvh - 32px)", overflowY: "auto" }}
             >
               <div className="bg-card rounded-2xl border shadow-xl p-6">
                 <div className="flex items-center justify-between mb-5">
