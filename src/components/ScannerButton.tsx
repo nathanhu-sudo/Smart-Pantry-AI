@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { PantryItem } from "@/types/pantry";
 
 interface ScannerButtonProps {
-  onScan: () => PantryItem;
+  onScan: () => Promise<PantryItem | undefined>;
 }
 
 export function ScannerButton({ onScan }: ScannerButtonProps) {
