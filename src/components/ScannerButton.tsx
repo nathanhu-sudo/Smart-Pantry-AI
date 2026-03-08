@@ -5,15 +5,17 @@ import { toast } from "sonner";
 import { PantryItem } from "@/types/pantry";
 
 interface ScannerButtonProps {
-  onScan: () => PantryItem;
+  onScan: () => Promise<PantryItem | undefined>;
 }
 
 export function ScannerButton({ onScan }: ScannerButtonProps) {
-  const handleScan = () => {
-    const item = onScan();
-    toast.success(`Scanned: ${item.name}`, {
-      description: `${item.weightKg} kg · ${item.shelfLifeDays} day shelf life`,
-    });
+  const handleScan = async () => {
+    const item = await onScan();
+    if (item) {
+      toast.success(`Scanned: ${item.name}`, {
+        description: `${item.weightKg} kg · ${item.shelfLifeDays} day shelf life`,
+      });
+    }
   };
 
   return (
