@@ -14,7 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      pantry_items: {
+        Row: {
+          added_at: string
+          co2_impact: string
+          created_at: string
+          id: string
+          image_url: string | null
+          name: string
+          shelf_life_days: number
+          status: string
+          user_id: string
+          weight_kg: number
+        }
+        Insert: {
+          added_at?: string
+          co2_impact?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name: string
+          shelf_life_days?: number
+          status?: string
+          user_id: string
+          weight_kg?: number
+        }
+        Update: {
+          added_at?: string
+          co2_impact?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          shelf_life_days?: number
+          status?: string
+          user_id?: string
+          weight_kg?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
