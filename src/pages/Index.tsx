@@ -164,8 +164,8 @@ const Index = () => {
                   <InventoryList
                     items={activeItems}
                     getDaysRemaining={getDaysRemaining}
-                    onConsume={() => {}}
-                    onToss={() => {}}
+                    onConsume={consumeItem}
+                    onToss={tossItem}
                   />
                 )}
               </section>
