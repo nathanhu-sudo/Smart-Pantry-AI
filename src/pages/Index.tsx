@@ -21,7 +21,7 @@ const TABS: { id: Tab; label: string; icon: typeof Home }[] = [
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<Tab>("home");
-  const { activeItems, impact, loading, getDaysRemaining, addItem } = usePantry();
+  const { activeItems, impact, loading, getDaysRemaining, addItem, consumeItem, tossItem } = usePantry();
   const { user, signOut } = useAuth();
 
   const expiringCount = activeItems.filter((i) => getDaysRemaining(i) <= 3).length;
