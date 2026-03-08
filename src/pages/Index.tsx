@@ -21,6 +21,12 @@ const Index = () => {
           style={{ backgroundImage: `url(${heroImage})` }}
         />
         <div className="relative container max-w-2xl py-10 px-4 flex flex-col items-center text-center gap-3">
+          <div className="absolute top-4 right-4">
+            <Button variant="ghost" size="sm" onClick={signOut} className="gap-1 text-muted-foreground">
+              <LogOut className="h-4 w-4" />
+              Sign out
+            </Button>
+          </div>
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
