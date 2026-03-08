@@ -10,6 +10,7 @@ import heroImage from "@/assets/hero-illustration.jpg";
 
 const Index = () => {
   const { activeItems, impact, getDaysRemaining, scanItem, consumeItem, tossItem } = usePantry();
+  const { signOut } = useAuth();
 
   return (
     <div className="min-h-screen bg-background">
