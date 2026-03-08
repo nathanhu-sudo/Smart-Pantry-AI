@@ -1,13 +1,16 @@
 import { motion } from "framer-motion";
-import { Leaf } from "lucide-react";
+import { Leaf, LogOut } from "lucide-react";
 import { Dashboard } from "@/components/Dashboard";
 import { InventoryList } from "@/components/InventoryList";
 import { ScannerButton } from "@/components/ScannerButton";
 import { usePantry } from "@/hooks/usePantry";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-illustration.jpg";
 
 const Index = () => {
   const { activeItems, impact, getDaysRemaining, scanItem, consumeItem, tossItem } = usePantry();
+  const { signOut } = useAuth();
 
   return (
     <div className="min-h-screen bg-background">
@@ -18,6 +21,12 @@ const Index = () => {
           style={{ backgroundImage: `url(${heroImage})` }}
         />
         <div className="relative container max-w-2xl py-10 px-4 flex flex-col items-center text-center gap-3">
+          <div className="absolute top-4 right-4">
+            <Button variant="ghost" size="sm" onClick={signOut} className="gap-1 text-muted-foreground">
+              <LogOut className="h-4 w-4" />
+              Sign out
+            </Button>
+          </div>
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
