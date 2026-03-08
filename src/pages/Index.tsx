@@ -1,9 +1,11 @@
 import { motion } from "framer-motion";
-import { Leaf } from "lucide-react";
+import { Leaf, LogOut } from "lucide-react";
 import { Dashboard } from "@/components/Dashboard";
 import { InventoryList } from "@/components/InventoryList";
 import { ScannerButton } from "@/components/ScannerButton";
 import { usePantry } from "@/hooks/usePantry";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-illustration.jpg";
 
 const Index = () => {
