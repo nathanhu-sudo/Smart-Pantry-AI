@@ -85,7 +85,7 @@ export function AddItemForm({ onAdd }: AddItemFormProps) {
               style={{ maxHeight: "calc(100dvh - 32px)", overflowY: "auto" }}
             >
               <div className="bg-card rounded-2xl border shadow-xl p-6">
-                <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center justify-between mb-5 cursor-grab active:cursor-grabbing select-none">
                   <div className="flex items-center gap-2">
                     <div className="rounded-full bg-primary/10 p-2">
                       <ShoppingBasket className="h-4 w-4 text-primary" />
@@ -93,8 +93,9 @@ export function AddItemForm({ onAdd }: AddItemFormProps) {
                     <h3 className="font-serif font-bold text-foreground text-lg">Add to pantry</h3>
                   </div>
                   <button
+                    onPointerDown={(e) => e.stopPropagation()}
                     onClick={() => setOpen(false)}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                   >
                     <X className="h-5 w-5" />
                   </button>
