@@ -72,17 +72,20 @@ export function AddItemForm({ onAdd }: AddItemFormProps) {
               onClick={() => setOpen(false)}
             />
 
-            {/* Modal — centred, max-height safe for small phones */}
+            {/* Modal — draggable, centred, max-height safe for small phones */}
             <motion.div
+              drag
+              dragMomentum={false}
+              dragElastic={0.08}
               initial={{ opacity: 0, y: 24, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 16, scale: 0.97 }}
               transition={{ type: "spring", damping: 28, stiffness: 320 }}
-              className="fixed z-50 inset-x-4 top-1/2 -translate-y-1/2 sm:inset-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-full sm:max-w-md"
+              className="fixed z-50 inset-x-4 top-1/2 -translate-y-1/2 sm:inset-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-full sm:max-w-md cursor-grab active:cursor-grabbing"
               style={{ maxHeight: "calc(100dvh - 32px)", overflowY: "auto" }}
             >
               <div className="bg-card rounded-2xl border shadow-xl p-6">
-                <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center justify-between mb-5 cursor-grab active:cursor-grabbing select-none">
                   <div className="flex items-center gap-2">
                     <div className="rounded-full bg-primary/10 p-2">
                       <ShoppingBasket className="h-4 w-4 text-primary" />
@@ -90,14 +93,15 @@ export function AddItemForm({ onAdd }: AddItemFormProps) {
                     <h3 className="font-serif font-bold text-foreground text-lg">Add to pantry</h3>
                   </div>
                   <button
+                    onPointerDown={(e) => e.stopPropagation()}
                     onClick={() => setOpen(false)}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                   >
                     <X className="h-5 w-5" />
                   </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4 cursor-default" onPointerDown={(e) => e.stopPropagation()}>
                   <div className="space-y-2">
                     <Label htmlFor="item-name">Item name</Label>
                     <Input
