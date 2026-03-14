@@ -101,7 +101,7 @@ export function AddItemForm({ onAdd }: AddItemFormProps) {
                   </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4 cursor-default" onPointerDown={(e) => e.stopPropagation()}>
                   <div className="space-y-2">
                     <Label htmlFor="item-name">Item name</Label>
                     <Input
