@@ -223,6 +223,8 @@ const Index = () => {
 
       {/* Spacer for bottom nav on mobile */}
       <div className="sm:hidden h-20" />
+
+      <Footer />
     </div>
   );
 };
