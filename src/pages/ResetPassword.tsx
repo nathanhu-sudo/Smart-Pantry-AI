@@ -106,6 +106,7 @@ const ResetPassword = () => {
           </CardContent>
         </Card>
       </motion.div>
+      <Footer />
     </div>
   );
 };
