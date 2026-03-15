@@ -49,22 +49,25 @@ const ResetPassword = () => {
 
   if (!ready) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-4">
-        <Card className="max-w-md w-full text-center">
-          <CardContent className="pt-6">
-            <p className="text-muted-foreground">Invalid or expired reset link. Please request a new one.</p>
-            <Button variant="link" onClick={() => navigate("/auth")} className="mt-4">
-              Back to login
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen bg-background flex flex-col items-center justify-between px-4">
+        <div className="flex-1 flex items-center justify-center">
+          <Card className="max-w-md w-full text-center">
+            <CardContent className="pt-6">
+              <p className="text-muted-foreground">Invalid or expired reset link. Please request a new one.</p>
+              <Button variant="link" onClick={() => navigate("/auth")} className="mt-4">
+                Back to login
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-between px-4">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md flex-1 flex flex-col items-center justify-center">
         <div className="flex items-center justify-center gap-2 mb-8">
           <div className="rounded-full bg-primary p-2">
             <Leaf className="h-5 w-5 text-primary-foreground" />
