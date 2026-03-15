@@ -313,6 +313,7 @@ const Auth = () => {
           </CardContent>
         </Card>
       </motion.div>
+      <Footer />
     </div>
   );
 };
