@@ -19,7 +19,22 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [socialLoading, setSocialLoading] = useState<"google" | "apple" | null>(null);
   const [checkEmailType, setCheckEmailType] = useState<"signup" | "forgot">("signup");
+
+  const handleSocialLogin = async (provider: "google" | "apple") => {
+    setSocialLoading(provider);
+    try {
+      const result = await lovable.auth.signInWithOAuth(provider, {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) throw result.error;
+    } catch (err: any) {
+      toast.error(err.message || `Failed to sign in with ${provider}`);
+    } finally {
+      setSocialLoading(null);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
