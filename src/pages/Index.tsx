@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Footer from "@/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import { Leaf, LogOut, Package, TrendingUp, Sparkles, BarChart2, ScanLine, Home } from "lucide-react";
 import { Dashboard } from "@/components/Dashboard";
@@ -222,6 +223,8 @@ const Index = () => {
 
       {/* Spacer for bottom nav on mobile */}
       <div className="sm:hidden h-20" />
+
+      <Footer />
     </div>
   );
 };
