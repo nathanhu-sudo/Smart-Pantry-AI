@@ -121,7 +121,7 @@ export function AddItemForm({ onAdd }: AddItemFormProps) {
                         id="weight"
                         type="number"
                         min="0.01"
-                        step="0.05"
+                        step="any"
                         value={weightKg}
                         onChange={(e) => setWeightKg(e.target.value)}
                         required
