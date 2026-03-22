@@ -105,12 +105,49 @@ export function usePantry() {
   );
 
   const tossItem = useCallback(
-    async (id: string) => {
-      const { error } = await supabase.from("pantry_items").update({ status: "tossed" }).eq("id", id);
-      if (error) { toast.error("Failed to update item"); return; }
-      setItems((prev) => prev.map((i) => (i.id === id ? { ...i, status: "tossed" as const } : i)));
+    async (id: string, tossedKg?: number) => {
+      const item = items.find((i) => i.id === id);
+      if (!item) return;
+
+      const amountTossed = tossedKg ?? item.weightKg;
+      const remaining = Math.round((item.weightKg - amountTossed) * 1000) / 1000;
+
+      if (remaining > 0) {
+        // Partial toss: update original item weight, insert a tossed record
+        const { error: updateErr } = await supabase
+          .from("pantry_items")
+          .update({ weight_kg: remaining })
+          .eq("id", id);
+        if (updateErr) { toast.error("Failed to update item"); return; }
+
+        const user_id = item.id ? (await supabase.from("pantry_items").select("user_id").eq("id", id).single()).data?.user_id : undefined;
+        if (user_id) {
+          await supabase.from("pantry_items").insert({
+            user_id,
+            name: item.name,
+            weight_kg: amountTossed,
+            shelf_life_days: item.shelfLifeDays,
+            co2_impact: item.co2Impact,
+            status: "tossed",
+            added_at: item.addedAt,
+          });
+        }
+
+        // Refresh items
+        const { data } = await supabase
+          .from("pantry_items")
+          .select("*")
+          .eq("user_id", user_id!)
+          .order("added_at", { ascending: false });
+        if (data) setItems(data.map(dbRowToItem));
+      } else {
+        // Full toss
+        const { error } = await supabase.from("pantry_items").update({ status: "tossed" }).eq("id", id);
+        if (error) { toast.error("Failed to update item"); return; }
+        setItems((prev) => prev.map((i) => (i.id === id ? { ...i, status: "tossed" as const } : i)));
+      }
     },
-    []
+    [items]
   );
 
   return { items, activeItems, impact, loading, getDaysRemaining, addItem, scanItem, consumeItem, tossItem };
