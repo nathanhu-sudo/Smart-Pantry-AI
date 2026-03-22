@@ -25,6 +25,13 @@ const Auth = () => {
   const [socialLoading, setSocialLoading] = useState<"google" | "apple" | null>(null);
   const [checkEmailType, setCheckEmailType] = useState<"signup" | "forgot">("signup");
 
+  // Redirect to home if already authenticated (e.g. after OAuth)
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate("/", { replace: true });
+    }
+  }, [user, authLoading, navigate]);
+
   const handleSocialLogin = async (provider: "google" | "apple") => {
     setSocialLoading(provider);
     try {
