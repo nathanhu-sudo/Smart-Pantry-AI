@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import Footer from "@/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import { Leaf, Mail, Lock, ArrowRight, Eye, EyeOff, CheckCircle } from "lucide-react";
@@ -15,6 +16,7 @@ type AuthMode = "login" | "signup" | "forgot" | "check-email";
 
 const Auth = () => {
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   const [mode, setMode] = useState<AuthMode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,6 +24,13 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<"google" | "apple" | null>(null);
   const [checkEmailType, setCheckEmailType] = useState<"signup" | "forgot">("signup");
+
+  // Redirect to home if already authenticated (e.g. after OAuth)
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate("/", { replace: true });
+    }
+  }, [user, authLoading, navigate]);
 
   const handleSocialLogin = async (provider: "google" | "apple") => {
     setSocialLoading(provider);
