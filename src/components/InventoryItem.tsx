@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { forwardRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Clock, Check, Trash2 } from "lucide-react";
 import { PantryItem } from "@/types/pantry";
@@ -27,7 +27,10 @@ function getUrgencyBg(days: number) {
 
 const co2Labels = { high: "🔴 High", medium: "🟡 Med", low: "🟢 Low" };
 
-export function InventoryItem({ item, daysRemaining, onConsume, onToss }: InventoryItemProps) {
+export const InventoryItem = forwardRef<HTMLDivElement, InventoryItemProps>(function InventoryItem(
+  { item, daysRemaining, onConsume, onToss },
+  ref
+) {
   const [showTossPrompt, setShowTossPrompt] = useState(false);
   const [tossAmount, setTossAmount] = useState(String(item.weightKg));
   const [tossing, setTossing] = useState(false);
@@ -47,6 +50,7 @@ export function InventoryItem({ item, daysRemaining, onConsume, onToss }: Invent
   return (
     <>
       <motion.div
+        ref={ref}
         layout
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -161,4 +165,4 @@ export function InventoryItem({ item, daysRemaining, onConsume, onToss }: Invent
       </AnimatePresence>
     </>
   );
-}
+});
