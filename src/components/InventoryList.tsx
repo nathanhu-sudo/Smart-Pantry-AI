@@ -7,7 +7,7 @@ interface InventoryListProps {
   items: PantryItem[];
   getDaysRemaining: (item: PantryItem) => number;
   onConsume: (id: string) => void;
-  onToss: (id: string) => void;
+  onToss: (id: string, tossedKg?: number) => void;
 }
 
 export function InventoryList({ items, getDaysRemaining, onConsume, onToss }: InventoryListProps) {
