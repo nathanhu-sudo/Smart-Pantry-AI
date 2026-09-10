@@ -2,13 +2,19 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 
+export const TAG_PRESETS = ["VIP", "Founder", "Food Saver"] as const;
+
 export interface AdminUser {
   user_id: string;
   email: string;
   display_name: string | null;
+  avatar_url: string | null;
   plan: string;
   plan_status: string;
   is_lifetime: boolean;
+  plan_started_at: string | null;
+  plan_expires_at: string | null;
+  tags: string[];
   joined_at: string | null;
   last_sign_in_at: string | null;
   total_items: number;
@@ -51,9 +57,13 @@ export function useAdmin() {
           user_id: r.user_id,
           email: r.email,
           display_name: r.display_name,
+          avatar_url: r.avatar_url ?? null,
           plan: r.plan ?? "free",
           plan_status: r.plan_status ?? "active",
           is_lifetime: r.is_lifetime === true,
+          plan_started_at: r.plan_started_at ?? null,
+          plan_expires_at: r.plan_expires_at ?? null,
+          tags: Array.isArray(r.tags) ? r.tags : [],
           joined_at: r.joined_at,
           last_sign_in_at: r.last_sign_in_at,
           total_items: Number(r.total_items),
@@ -85,5 +95,76 @@ export function useAdmin() {
     return {};
   };
 
-  return { isAdmin, adminLoading, users, usersLoading, refetchUsers: fetchUsers, kickUser };
+  const setUserPlan = async (
+    userId: string,
+    plan: string,
+    billing: "monthly" | "yearly" = "monthly"
+  ): Promise<{ error?: string }> => {
+    const { data, error } = await supabase.rpc("admin_set_user_plan" as any, {
+      _user_id: userId,
+      _plan: plan,
+      _billing: billing,
+    });
+    if (error) return { error: error.message };
+    const row: any = data;
+    setUsers((prev) =>
+      prev.map((u) =>
+        u.user_id === userId
+          ? {
+              ...u,
+              plan: row?.plan ?? plan,
+              plan_status: row?.status ?? "active",
+              is_lifetime: row?.is_lifetime === true,
+              plan_started_at: row?.started_at ?? u.plan_started_at,
+              plan_expires_at: row?.expires_at ?? null,
+            }
+          : u
+      )
+    );
+    return {};
+  };
+
+  const addTag = async (userId: string, tag: string): Promise<{ error?: string }> => {
+    const clean = tag.trim();
+    if (!clean) return { error: "Tag can't be empty" };
+    const { error } = await supabase.rpc("admin_add_user_tag" as any, {
+      _user_id: userId,
+      _tag: clean,
+    });
+    if (error) return { error: error.message };
+    setUsers((prev) =>
+      prev.map((u) =>
+        u.user_id === userId && !u.tags.includes(clean)
+          ? { ...u, tags: [...u.tags, clean] }
+          : u
+      )
+    );
+    return {};
+  };
+
+  const removeTag = async (userId: string, tag: string): Promise<{ error?: string }> => {
+    const { error } = await supabase.rpc("admin_remove_user_tag" as any, {
+      _user_id: userId,
+      _tag: tag,
+    });
+    if (error) return { error: error.message };
+    setUsers((prev) =>
+      prev.map((u) =>
+        u.user_id === userId ? { ...u, tags: u.tags.filter((t) => t !== tag) } : u
+      )
+    );
+    return {};
+  };
+
+  return {
+    isAdmin,
+    adminLoading,
+    users,
+    usersLoading,
+    refetchUsers: fetchUsers,
+    kickUser,
+    setUserPlan,
+    addTag,
+    removeTag,
+  };
 }

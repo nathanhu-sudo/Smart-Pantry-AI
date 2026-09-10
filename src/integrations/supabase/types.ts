@@ -435,11 +435,61 @@ export type Database = {
         }
         Relationships: []
       }
+      user_tags: {
+        Row: {
+          created_at: string
+          granted_by: string | null
+          id: string
+          tag: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          granted_by?: string | null
+          id?: string
+          tag: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          granted_by?: string | null
+          id?: string
+          tag?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      admin_add_user_tag: {
+        Args: { _tag: string; _user_id: string }
+        Returns: undefined
+      }
+      admin_remove_user_tag: {
+        Args: { _tag: string; _user_id: string }
+        Returns: undefined
+      }
+      admin_set_user_plan: {
+        Args: { _billing?: string; _plan: string; _user_id: string }
+        Returns: {
+          expires_at: string | null
+          is_lifetime: boolean
+          plan: string
+          started_at: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "user_subscriptions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       check_and_unlock_achievements: {
         Args: { _user_id: string }
         Returns: {
@@ -463,6 +513,7 @@ export type Database = {
         Args: never
         Returns: {
           active_items: number
+          avatar_url: string
           consumed_items: number
           display_name: string
           email: string
@@ -471,7 +522,10 @@ export type Database = {
           last_activity: string
           last_sign_in_at: string
           plan: string
+          plan_expires_at: string
+          plan_started_at: string
           plan_status: string
+          tags: string[]
           tossed_items: number
           total_items: number
           total_saved_kg: number
