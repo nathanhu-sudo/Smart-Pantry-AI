@@ -2,13 +2,19 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 
+export const TAG_PRESETS = ["VIP", "Founder", "Food Saver"] as const;
+
 export interface AdminUser {
   user_id: string;
   email: string;
   display_name: string | null;
+  avatar_url: string | null;
   plan: string;
   plan_status: string;
   is_lifetime: boolean;
+  plan_started_at: string | null;
+  plan_expires_at: string | null;
+  tags: string[];
   joined_at: string | null;
   last_sign_in_at: string | null;
   total_items: number;
