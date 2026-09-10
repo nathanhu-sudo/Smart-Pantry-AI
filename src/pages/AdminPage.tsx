@@ -218,6 +218,22 @@ const AdminPage = () => {
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
+                {/* Plan distribution */}
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm flex items-center gap-2"><Trophy className="h-4 w-4 text-primary" /> Plan Breakdown</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-sm">
+                    <Row label="Free" value={planCounts.free ?? 0} />
+                    <Row label="Lite" value={planCounts.lite ?? 0} />
+                    <Row label="Pro" value={planCounts.pro ?? 0} />
+                    <Row label="Lifetime" value={planCounts.lifetime ?? 0} />
+                    <div className="pt-2 border-t">
+                      <Row label="Paid members" value={`${paidUsers} / ${totalUsers} (${totalUsers ? Math.round((paidUsers / totalUsers) * 100) : 0}%)`} />
+                    </div>
+                  </CardContent>
+                </Card>
+
                 {/* Engagement */}
                 <Card>
                   <CardHeader className="pb-2">
@@ -362,13 +378,16 @@ const AdminPage = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Email</TableHead>
+                      <TableHead>Member</TableHead>
+                      <TableHead>Plan</TableHead>
+                      <TableHead>Joined</TableHead>
                       <TableHead className="text-center">Active</TableHead>
                       <TableHead className="text-center">Consumed</TableHead>
                       <TableHead className="text-center">Tossed</TableHead>
                       <TableHead className="text-right">Saved (kg)</TableHead>
                       <TableHead className="text-right">Wasted (kg)</TableHead>
                       <TableHead className="text-right">CO₂ Saved</TableHead>
+                      <TableHead>Last Sign-in</TableHead>
                       <TableHead>Last Active</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
