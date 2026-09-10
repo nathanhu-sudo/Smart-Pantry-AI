@@ -95,5 +95,76 @@ export function useAdmin() {
     return {};
   };
 
-  return { isAdmin, adminLoading, users, usersLoading, refetchUsers: fetchUsers, kickUser };
+  const setUserPlan = async (
+    userId: string,
+    plan: string,
+    billing: "monthly" | "yearly" = "monthly"
+  ): Promise<{ error?: string }> => {
+    const { data, error } = await supabase.rpc("admin_set_user_plan" as any, {
+      _user_id: userId,
+      _plan: plan,
+      _billing: billing,
+    });
+    if (error) return { error: error.message };
+    const row: any = data;
+    setUsers((prev) =>
+      prev.map((u) =>
+        u.user_id === userId
+          ? {
+              ...u,
+              plan: row?.plan ?? plan,
+              plan_status: row?.status ?? "active",
+              is_lifetime: row?.is_lifetime === true,
+              plan_started_at: row?.started_at ?? u.plan_started_at,
+              plan_expires_at: row?.expires_at ?? null,
+            }
+          : u
+      )
+    );
+    return {};
+  };
+
+  const addTag = async (userId: string, tag: string): Promise<{ error?: string }> => {
+    const clean = tag.trim();
+    if (!clean) return { error: "Tag can't be empty" };
+    const { error } = await supabase.rpc("admin_add_user_tag" as any, {
+      _user_id: userId,
+      _tag: clean,
+    });
+    if (error) return { error: error.message };
+    setUsers((prev) =>
+      prev.map((u) =>
+        u.user_id === userId && !u.tags.includes(clean)
+          ? { ...u, tags: [...u.tags, clean] }
+          : u
+      )
+    );
+    return {};
+  };
+
+  const removeTag = async (userId: string, tag: string): Promise<{ error?: string }> => {
+    const { error } = await supabase.rpc("admin_remove_user_tag" as any, {
+      _user_id: userId,
+      _tag: tag,
+    });
+    if (error) return { error: error.message };
+    setUsers((prev) =>
+      prev.map((u) =>
+        u.user_id === userId ? { ...u, tags: u.tags.filter((t) => t !== tag) } : u
+      )
+    );
+    return {};
+  };
+
+  return {
+    isAdmin,
+    adminLoading,
+    users,
+    usersLoading,
+    refetchUsers: fetchUsers,
+    kickUser,
+    setUserPlan,
+    addTag,
+    removeTag,
+  };
 }
