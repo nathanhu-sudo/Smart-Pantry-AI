@@ -114,6 +114,39 @@ const AdminPage = () => {
   const topSaver = [...users].sort((a, b) => b.total_saved_kg - a.total_saved_kg)[0];
   const topWaster = [...users].sort((a, b) => b.total_wasted_kg - a.total_wasted_kg)[0];
 
+  // ---- Plan distribution & membership ----
+  const planCounts = users.reduce<Record<string, number>>((acc, u) => {
+    const key = u.is_lifetime ? "lifetime" : u.plan;
+    acc[key] = (acc[key] ?? 0) + 1;
+    return acc;
+  }, {});
+  const paidUsers = users.filter((u) => u.is_lifetime || u.plan !== "free").length;
+
+  const memberFor = (joined: string | null) => {
+    if (!joined) return "—";
+    const days = Math.max(0, Math.floor(daysSince(joined)));
+    if (days < 1) return "today";
+    if (days < 30) return `${days}d`;
+    const months = Math.floor(days / 30);
+    if (months < 12) return `${months}mo ${days % 30}d`;
+    return `${Math.floor(months / 12)}y ${months % 12}mo`;
+  };
+
+  const planBadge = (u: (typeof users)[number]) => {
+    const label = u.is_lifetime ? "Lifetime" : u.plan.charAt(0).toUpperCase() + u.plan.slice(1);
+    const cls =
+      u.is_lifetime || u.plan === "pro"
+        ? "bg-primary/15 text-primary"
+        : u.plan === "lite"
+          ? "bg-success/15 text-success"
+          : "bg-muted text-muted-foreground";
+    return (
+      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${cls}`}>
+        {label}
+      </span>
+    );
+  };
+
   const co2Saved = sumSaved * co2Factor;
   const co2Wasted = sumWasted * co2Factor;
   // rough equivalences
@@ -185,6 +218,22 @@ const AdminPage = () => {
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
+                {/* Plan distribution */}
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm flex items-center gap-2"><Trophy className="h-4 w-4 text-primary" /> Plan Breakdown</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-sm">
+                    <Row label="Free" value={planCounts.free ?? 0} />
+                    <Row label="Lite" value={planCounts.lite ?? 0} />
+                    <Row label="Pro" value={planCounts.pro ?? 0} />
+                    <Row label="Lifetime" value={planCounts.lifetime ?? 0} />
+                    <div className="pt-2 border-t">
+                      <Row label="Paid members" value={`${paidUsers} / ${totalUsers} (${totalUsers ? Math.round((paidUsers / totalUsers) * 100) : 0}%)`} />
+                    </div>
+                  </CardContent>
+                </Card>
+
                 {/* Engagement */}
                 <Card>
                   <CardHeader className="pb-2">
@@ -329,13 +378,16 @@ const AdminPage = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Email</TableHead>
+                      <TableHead>Member</TableHead>
+                      <TableHead>Plan</TableHead>
+                      <TableHead>Joined</TableHead>
                       <TableHead className="text-center">Active</TableHead>
                       <TableHead className="text-center">Consumed</TableHead>
                       <TableHead className="text-center">Tossed</TableHead>
                       <TableHead className="text-right">Saved (kg)</TableHead>
                       <TableHead className="text-right">Wasted (kg)</TableHead>
                       <TableHead className="text-right">CO₂ Saved</TableHead>
+                      <TableHead>Last Sign-in</TableHead>
                       <TableHead>Last Active</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
@@ -343,22 +395,37 @@ const AdminPage = () => {
                   <TableBody>
                     {usersLoading ? (
                       <TableRow>
-                        <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">Loading…</TableCell>
+                        <TableCell colSpan={12} className="text-center py-8 text-muted-foreground">Loading…</TableCell>
                       </TableRow>
                     ) : users.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">No users yet</TableCell>
+                        <TableCell colSpan={12} className="text-center py-8 text-muted-foreground">No users yet</TableCell>
                       </TableRow>
                     ) : (
                       users.map((u) => (
                         <TableRow key={u.user_id}>
-                          <TableCell className="font-medium text-sm">{u.email}</TableCell>
+                          <TableCell>
+                            <div className="font-medium text-sm">{u.display_name ?? "—"}</div>
+                            <div className="text-xs text-muted-foreground">{u.email}</div>
+                          </TableCell>
+                          <TableCell>{planBadge(u)}</TableCell>
+                          <TableCell className="text-xs text-muted-foreground">
+                            {u.joined_at ? (
+                              <>
+                                <div>{new Date(u.joined_at).toLocaleDateString()}</div>
+                                <div className="text-[10px]">member for {memberFor(u.joined_at)}</div>
+                              </>
+                            ) : "—"}
+                          </TableCell>
                           <TableCell className="text-center">{u.active_items}</TableCell>
                           <TableCell className="text-center text-success">{u.consumed_items}</TableCell>
                           <TableCell className="text-center text-destructive">{u.tossed_items}</TableCell>
                           <TableCell className="text-right">{u.total_saved_kg.toFixed(1)}</TableCell>
                           <TableCell className="text-right">{u.total_wasted_kg.toFixed(1)}</TableCell>
                           <TableCell className="text-right">{(u.total_saved_kg * co2Factor).toFixed(1)} kg</TableCell>
+                          <TableCell className="text-xs text-muted-foreground">
+                            {u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString() : "—"}
+                          </TableCell>
                           <TableCell className="text-xs text-muted-foreground">
                             {u.last_activity ? new Date(u.last_activity).toLocaleDateString() : "—"}
                           </TableCell>

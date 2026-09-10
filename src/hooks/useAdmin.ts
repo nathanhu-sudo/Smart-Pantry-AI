@@ -50,6 +50,12 @@ export function useAdmin() {
         data.map((r: any) => ({
           user_id: r.user_id,
           email: r.email,
+          display_name: r.display_name,
+          plan: r.plan ?? "free",
+          plan_status: r.plan_status ?? "active",
+          is_lifetime: r.is_lifetime === true,
+          joined_at: r.joined_at,
+          last_sign_in_at: r.last_sign_in_at,
           total_items: Number(r.total_items),
           active_items: Number(r.active_items),
           consumed_items: Number(r.consumed_items),
