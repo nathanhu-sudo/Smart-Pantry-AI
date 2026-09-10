@@ -395,22 +395,37 @@ const AdminPage = () => {
                   <TableBody>
                     {usersLoading ? (
                       <TableRow>
-                        <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">Loading…</TableCell>
+                        <TableCell colSpan={12} className="text-center py-8 text-muted-foreground">Loading…</TableCell>
                       </TableRow>
                     ) : users.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">No users yet</TableCell>
+                        <TableCell colSpan={12} className="text-center py-8 text-muted-foreground">No users yet</TableCell>
                       </TableRow>
                     ) : (
                       users.map((u) => (
                         <TableRow key={u.user_id}>
-                          <TableCell className="font-medium text-sm">{u.email}</TableCell>
+                          <TableCell>
+                            <div className="font-medium text-sm">{u.display_name ?? "—"}</div>
+                            <div className="text-xs text-muted-foreground">{u.email}</div>
+                          </TableCell>
+                          <TableCell>{planBadge(u)}</TableCell>
+                          <TableCell className="text-xs text-muted-foreground">
+                            {u.joined_at ? (
+                              <>
+                                <div>{new Date(u.joined_at).toLocaleDateString()}</div>
+                                <div className="text-[10px]">member for {memberFor(u.joined_at)}</div>
+                              </>
+                            ) : "—"}
+                          </TableCell>
                           <TableCell className="text-center">{u.active_items}</TableCell>
                           <TableCell className="text-center text-success">{u.consumed_items}</TableCell>
                           <TableCell className="text-center text-destructive">{u.tossed_items}</TableCell>
                           <TableCell className="text-right">{u.total_saved_kg.toFixed(1)}</TableCell>
                           <TableCell className="text-right">{u.total_wasted_kg.toFixed(1)}</TableCell>
                           <TableCell className="text-right">{(u.total_saved_kg * co2Factor).toFixed(1)} kg</TableCell>
+                          <TableCell className="text-xs text-muted-foreground">
+                            {u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString() : "—"}
+                          </TableCell>
                           <TableCell className="text-xs text-muted-foreground">
                             {u.last_activity ? new Date(u.last_activity).toLocaleDateString() : "—"}
                           </TableCell>
