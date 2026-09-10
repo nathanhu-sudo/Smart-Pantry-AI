@@ -114,6 +114,39 @@ const AdminPage = () => {
   const topSaver = [...users].sort((a, b) => b.total_saved_kg - a.total_saved_kg)[0];
   const topWaster = [...users].sort((a, b) => b.total_wasted_kg - a.total_wasted_kg)[0];
 
+  // ---- Plan distribution & membership ----
+  const planCounts = users.reduce<Record<string, number>>((acc, u) => {
+    const key = u.is_lifetime ? "lifetime" : u.plan;
+    acc[key] = (acc[key] ?? 0) + 1;
+    return acc;
+  }, {});
+  const paidUsers = users.filter((u) => u.is_lifetime || u.plan !== "free").length;
+
+  const memberFor = (joined: string | null) => {
+    if (!joined) return "—";
+    const days = Math.max(0, Math.floor(daysSince(joined)));
+    if (days < 1) return "today";
+    if (days < 30) return `${days}d`;
+    const months = Math.floor(days / 30);
+    if (months < 12) return `${months}mo ${days % 30}d`;
+    return `${Math.floor(months / 12)}y ${months % 12}mo`;
+  };
+
+  const planBadge = (u: (typeof users)[number]) => {
+    const label = u.is_lifetime ? "Lifetime" : u.plan.charAt(0).toUpperCase() + u.plan.slice(1);
+    const cls =
+      u.is_lifetime || u.plan === "pro"
+        ? "bg-primary/15 text-primary"
+        : u.plan === "lite"
+          ? "bg-success/15 text-success"
+          : "bg-muted text-muted-foreground";
+    return (
+      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${cls}`}>
+        {label}
+      </span>
+    );
+  };
+
   const co2Saved = sumSaved * co2Factor;
   const co2Wasted = sumWasted * co2Factor;
   // rough equivalences
